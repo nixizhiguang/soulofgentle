@@ -17,32 +17,35 @@ const styles = StyleSheet.create({
   },
 });
 
-class AutoLoginScreen extends React.Component {
-  constructor() {
-    super();
-    this._bootstrapAsync();
-  }
-
-  // Fetch the token from storage then navigate to our appropriate place
-  _bootstrapAsync = () => {
-   /* const userToken = await AsyncStorage.getItem('userToken');
-
-    // This will switch to the App screen or Auth screen and this loading
-    // screen will be unmounted and thrown away.
-    if(userToken){
-    	// 此处切换为ex模式
-      this.props.navigation.navigate('Home');
-      return;
-    }*/
-
-    // 首次载入登录态之后,默认进去主页
-    //this.props.navigation.navigate('Login');
-    return;
+export default class AutoLoginScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Autoloading',
   };
 
-  componentDidmout (){
+  constructor() {
+    super();
+    // Fetch the token from storage then navigate to our appropriate place
+    this._bootstrapAsync = () => {
+     /* const userToken = await AsyncStorage.getItem('userToken');
+
+      // This will switch to the App screen or Auth screen and this loading
+      // screen will be unmounted and thrown away.
+      if(userToken){
+        // 此处切换为ex模式
+        this.props.navigation.navigate('Home');
+        return;
+      }*/
+
+      // 首次载入登录态之后,默认进去主页
+      //this.props.navigation.navigate('Login');
+      this.props.navigation.navigate('Login');
+      return;
+    };
+  }
+
+  componentDidMount (){
      // 首次载入登录态之后,默认进去主页
-    this.props.navigation.navigate('Login');
+     this._bootstrapAsync();
   }
 
   // 退出登录
@@ -62,4 +65,4 @@ class AutoLoginScreen extends React.Component {
   }
 }
 
-export default withNavigation(AutoLoginScreen);
+//export default withNavigation(AutoLoginScreen);

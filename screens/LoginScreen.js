@@ -2,11 +2,12 @@ import React from 'react';
 import {
   ActivityIndicator,
   AsyncStorage,
-  Button,
+  TouchableOpacity,
   ToastAndroid,
   View,
   StyleSheet,
-  TextInput
+  TextInput,
+  Text
 } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
@@ -17,15 +18,24 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
     backgroundColor: '#DDD',
   },
   mainView: {
+    flex: 0.4,
+    top: '20%',
+    flexDirection: "column",
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    backgroundColor: '#DDD',
+    width: '100%',
     //zIndex: 1,
   },
   loadingView: {
+    flex: 1,
     //zIndex: 2,
     backgroundColor: 'rgba(27,31,35,.05)',
+    width: '100%',
   },
 });
 
@@ -47,26 +57,30 @@ class LoginScreen extends React.Component {
     this.login.bind(this);
   }
 
-  login = async () => {
+  login = () => {
     this.setState({loading: true});
 
-    const pixiv = new PixivAppApi()
-    await pixiv.login(this.state.account, this.state.password)
-      .then(json => {
-        this.setState({loading: false});
-        console.log(json);
-        return;
+    const pixiv = new PixivAppApi();
 
-        let loginFailed = true;
-        if(loginFailed){
-          return ToastAndroid.show("登录失败!", ToastAndroid.SHORT,ToastAndroid.CENTER);
-        }
+    pixiv.login(this.state.account, this.state.password)
+      .then(
+        json => {
+          this.setState({loading: false});
+          console.log(json);
+          return;
 
-        AsyncStorage.setItem('refreshToken', json.refresh_token);
-        AsyncStorage.setItem('accessToken', json.access_token);
+          let loginFailed = true;
+          if(loginFailed){
+            return ToastAndroid.show("登录失败!", ToastAndroid.SHORT,ToastAndroid.CENTER);
+          }
 
-        this.props.navigation.navigate('Home');
-      })
+          AsyncStorage.setItem('refreshToken', json.refresh_token);
+          AsyncStorage.setItem('accessToken', json.access_token);
+
+          this.props.navigation.navigate('Home');
+        },
+        err => console.log(err)
+      )
       .then(() => {
         console.log('finish login action');
       });
@@ -75,12 +89,11 @@ class LoginScreen extends React.Component {
   render() {
     return (
       <View style={styles.loginContainer}>
-        <View style={this.state.loading ? {display: 'none'} : {}}>
+        <View style={this.state.loading ? {display: 'none'} : styles.mainView}>
           <TextInput
             style={{
               flex: 1,
-              width: '50%',
-              height: 60,
+              width: '60%',
               padding: 0
             }}
             placeholder="请输入账号"
@@ -91,8 +104,7 @@ class LoginScreen extends React.Component {
           <TextInput
             style={{
               flex: 1,
-              width: '50%',
-              height: 60,
+              width: '60%',
               padding: 0
             }}
             secureTextEntry={true}
@@ -104,8 +116,7 @@ class LoginScreen extends React.Component {
           <TextInput
             style={{
               flex: 1,
-              width: '50%',
-              height: 60,
+              width: '60%',
               padding: 0
             }}
             placeholder="请输入验证码(可选)"
@@ -113,7 +124,27 @@ class LoginScreen extends React.Component {
             onSubmitEditing={this.login}
             value={this.state.captcha}
           />
-          <Button title="Sign in!" onPress={this.login} />
+          <TouchableOpacity
+            title=""
+            onPress={this.login}
+            style={{
+              flex: 0.5,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              width: '60%',
+              padding: 8,
+              backgroundColor: 'black',
+            }}
+          >
+            <Text style={{
+              flex: 0.4,
+              color: 'white',
+              fontStyle: 'normal',
+              fontSize: 30
+            }}>
+              Sign in
+            </Text>
+          </TouchableOpacity>
         </View>
         <View style={this.state.loading ? styles.loadingView : {display: 'none'}}>
           <ActivityIndicator animating={true} />
