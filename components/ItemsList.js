@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Image, Text, View, TouchableOpacity, Button, FlatList,StyleSheet } from "react-native";
+import PropTypes from 'prop-types';
 import Item from '../components/Item';
 
 export default class ItemsList extends React.Component {

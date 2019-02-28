@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Image, Text, View, TouchableOpacity, TextInput, Button, StyleSheet } from "react-native";
+import PropTypes from 'prop-types'
 
 export default class SearchMenu extends React.Component {
   constructor(props) {

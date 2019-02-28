@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Image, View, TouchableOpacity, TextInput,StyleSheet } from "react-native";
 import { withNavigation } from 'react-navigation';
+import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
   topBar: {

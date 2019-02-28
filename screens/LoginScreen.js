@@ -10,8 +10,10 @@ import {
   Text
 } from 'react-native';
 import { withNavigation } from 'react-navigation';
-
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types';
 import PixivAppApi from 'pixiv-app-api';
+import {updateUser} from '../reducers/user';
 
 const styles = StyleSheet.create({
   loginContainer: {
@@ -44,12 +46,17 @@ class LoginScreen extends React.Component {
     title: 'Please sign in',
   };
 
+  static propTypes = {
+    navigation: PropTypes.object,
+    updateUser: PropTypes.func,
+  }
+
   constructor(props) {
     super(props);
 
     this.state = {
-      account: null,
-      password: null,
+      account: this.props.account,
+      password: this.props.password,
       captcha: null,
       loading: false
     };
@@ -65,25 +72,24 @@ class LoginScreen extends React.Component {
     pixiv.login(this.state.account, this.state.password)
       .then(
         json => {
+          let userInfo = {...json, ...json.user};
+
+          delete userInfo.user;
+
+          this.props.updateUser(userInfo);
+
+          AsyncStorage.setItem('user', JSON.stringify(userInfo));
+
           this.setState({loading: false});
-          console.log(json);
-          return;
-
-          let loginFailed = true;
-          if(loginFailed){
-            return ToastAndroid.show("登录失败!", ToastAndroid.SHORT,ToastAndroid.CENTER);
-          }
-
-          AsyncStorage.setItem('refreshToken', json.refresh_token);
-          AsyncStorage.setItem('accessToken', json.access_token);
 
           this.props.navigation.navigate('Home');
         },
-        err => console.log(err)
-      )
-      .then(() => {
-        console.log('finish login action');
-      });
+        err => {
+          console.log(err);
+          this.setState({loading: false});
+          return ToastAndroid.show("登录失败,请检查用户名和密码!", ToastAndroid.SHORT,ToastAndroid.CENTER);
+        }
+      );
   }
 
   render() {
@@ -154,4 +160,43 @@ class LoginScreen extends React.Component {
   }
 }
 
-export default withNavigation(LoginScreen);
+// connect 导航...
+const LoginScreenWithNav = withNavigation(LoginScreen);
+
+// 用户信息从 state.comments 中获取
+const mapStateToProps = (state) => {
+  return {
+    account: state.user.loginAccount,
+    password: state.user.password,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    // 提供给 LoginScreen
+    // 当Autologin失败或者登出之后进入此屏幕
+    // 登录成功时将用户信息更新到store，记得缓存在本地存储中
+    updateUser: (user) => {
+      dispatch(updateUser(user))
+    },
+  }
+}
+
+class LoginScreenContainer extends React.Component {
+   render() {
+    return (
+      <LoginScreenWithNav
+        account={this.props.account}
+        password={this.props.password}
+        updateUser={this.props.updateUser}
+       />
+      );
+  }
+}
+
+// 将 LoginScreen connect 到 store
+// 会把 user, updateUser传给 LoginScreen
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoginScreenContainer);

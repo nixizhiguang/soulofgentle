@@ -9,12 +9,16 @@
   "dependencies": {
     "axios": "^0.18.0",
     "pixiv-app-api": "^0.11.1",
+    "pixiv-img": "^0.3.1",
+    "prop-types": "^15.7.2",
     "querystring": "^0.2.0",
     "react": "16.6.3",
     "react-native": "0.58.5",
     "react-native-gesture-handler": "^1.0.15",
     "react-native-vector-icons": "^6.3.0",
     "react-navigation": "^3.3.0",
+    "react-redux": "^6.0.1",
+    "redux": "^4.0.1",
     "url": "^0.11.0"
   },
   "devDependencies": {
@@ -22,7 +26,8 @@
     "babel-jest": "24.1.0",
     "jest": "24.1.0",
     "metro-react-native-babel-preset": "0.51.1",
-    "react-test-renderer": "16.6.3"
+    "react-test-renderer": "16.6.3",
+    "redux-devtools": "^3.5.0"
   },
   "jest": {
     "preset": "react-native"
